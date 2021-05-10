@@ -1,0 +1,25 @@
+#BlueJ class context
+comment0.target=GUI
+comment1.params=game
+comment1.target=GUI(gamelogic.Game)
+comment10.params=evt
+comment10.target=void\ inventoryButtonLabelMouseClicked(java.awt.event.MouseEvent)
+comment11.params=string
+comment11.target=void\ updateOutput(java.lang.String)
+comment2.params=
+comment2.target=void\ initializeComponents()
+comment3.params=g\ bounds\ hasFocus
+comment3.target=void\ paintCurrentValueBackground(java.awt.Graphics,\ java.awt.Rectangle,\ boolean)
+comment4.params=evt
+comment4.target=void\ mouseClicked(java.awt.event.MouseEvent)
+comment5.params=
+comment5.target=void\ updatePlayerScreen()
+comment6.params=suspend
+comment6.target=void\ suspendPlayerSelection(boolean)
+comment7.params=comp
+comment7.target=void\ makeTransparent(java.awt.Component[])
+comment8.params=
+comment8.target=void\ addIcons()
+comment9.params=evt
+comment9.target=void\ windowStateChanged(java.awt.event.WindowEvent)
+numComments=12
