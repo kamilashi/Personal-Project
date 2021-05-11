@@ -50,6 +50,7 @@ import com.jgoodies.common.*;
 import java.awt.FlowLayout;
 import java.awt.ComponentOrientation;
 import javax.swing.BoxLayout;
+import java.awt.Point;
 
 public class GUI {
 
@@ -152,12 +153,13 @@ public class GUI {
 
 		con.add(backgroundPanel);
 
-		JLabel portraitLabel = new JLabel(
-				new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/portrait_panel.png")));
-		portraitLabel.setBounds(0, 0, 326, 421);
+		JLabel portraitLabel = new JLabel();
+		portraitLabel.setBackground(Color.GRAY);
+		portraitLabel.setOpaque(true);
+		portraitLabel.setBounds(0, 0, 326, 427);
 
 		JPanel portraitPanel = new JPanel();
-		portraitPanel.setBounds(0, 0, 326, 421);
+		portraitPanel.setBounds(0, 0, 326, 427);
 		portraitPanel.setVisible(true);
 		portraitPanel.setOpaque(false);
 		portraitPanel.setLayout(null);
@@ -232,20 +234,22 @@ public class GUI {
 				FormSpecs.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("left:pref"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(344dlu;default)"),
+				ColumnSpec.decode("max(331dlu;default)"),
 				FormSpecs.RELATED_GAP_COLSPEC,
 				ColumnSpec.decode("max(201dlu;pref)"),
 				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("left:min:grow"),},
+				FormSpecs.DEFAULT_COLSPEC,},
 			new RowSpec[] {
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("max(4dlu;default)"),
 				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("top:max(51dlu;min):grow"),
+				FormSpecs.DEFAULT_ROWSPEC,
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("fill:max(421px;pref)"),
 				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(192dlu;default)"),
+				RowSpec.decode("max(103dlu;default)"),
+				FormSpecs.RELATED_GAP_ROWSPEC,
+				RowSpec.decode("top:max(79dlu;default)"),
 				FormSpecs.RELATED_GAP_ROWSPEC,
 				RowSpec.decode("bottom:pref:grow"),}));
 
@@ -325,7 +329,7 @@ public class GUI {
 		flowLayout_2.setHgap(0);
 		flowLayout_2.setAlignment(FlowLayout.LEFT);
 		infoPanelWrapper.setOpaque(false);
-		contentPanel.add(infoPanelWrapper, "1, 10, 4, 1");
+		contentPanel.add(infoPanelWrapper, "1, 12, 4, 1");
 
 		//infoPanel = new ResizeablePanel();
 		infoPanel = new JPanel();
@@ -373,17 +377,17 @@ public class GUI {
 		inputPanelWrapper.setOpaque(false);
 		FlowLayout flowLayout_1 = (FlowLayout) inputPanelWrapper.getLayout();
 		flowLayout_1.setAlignment(FlowLayout.LEFT);
-		contentPanel.add(inputPanelWrapper, "8, 10, left, center");
+		contentPanel.add(inputPanelWrapper, "8, 12, left, default");
 
 		inputPanel = new JPanel();
-		inputPanel.setPreferredSize(new Dimension(410, 50));
+		inputPanel.setPreferredSize(new Dimension(410, 100));
 		inputPanel.setOpaque(false);
 		inputPanelWrapper.add(inputPanel);
 		inputPanel.setLayout(null);
 
 		input = new JTextField();
 		input.setBackground(Color.LIGHT_GRAY);
-		input.setBounds(0, 24, 400, 26);
+		input.setBounds(0, 0, 400, 26);
 		input.setText("");
 		input.setSelectionColor(Color.LIGHT_GRAY);
 		input.setHorizontalAlignment(SwingConstants.LEFT);
@@ -519,10 +523,12 @@ public class GUI {
 	}
 	public void updateScale()
 	{
+		//gameFrame.pack();
 		backgroundPanel.setSize(gameFrame.getSize());
-		contentPanel.setBounds(0, 0, gameFrame.getWidth(), gameFrame.getHeight());
-		//infoPanel.scaleBackground();
+		//contentPanel.setBounds(0, 0, gameFrame.getWidth(), gameFrame.getHeight());
+		contentPanel.setSize(gameFrame.getSize());
 		backgroundPanel.scaleBackground();
+		
 	}
 
 	class MouseClickedOutside extends MouseAdapter implements MouseListener {

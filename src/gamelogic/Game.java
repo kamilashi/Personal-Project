@@ -141,7 +141,7 @@ public class Game {
 	private void printWelcome() {
 		IORedirect.printOutput("Welcome to the game. I haven't come up with a proper name yet.\n");
 		IORedirect.printOutput("The input field is the gray box below, you can type the commands there in the following form: \ncommand word + optional word2 + optional word3. \nFor example: \ngo south or take [itemName].\n");
-		IORedirect.printOutput("Typing [help] (without the brackets) will display all the commands supported so far.\n\nStart by typing [inspect] to inspect the are around you and see all the interactible objects. Good luck!");
+		IORedirect.printOutput("Typing [help] (without the brackets) will display all the commands supported so far.\n\nStart by typing [inspect] to inspect the area around you and see all the interactible objects. Good luck!");
 	}
 
 	public Player getCurrentPlayer() {
