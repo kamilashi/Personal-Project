@@ -154,9 +154,10 @@ public class GUI {
 		con.add(backgroundPanel);
 
 		JLabel portraitLabel = new JLabel();
+		portraitLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		portraitLabel.setBackground(Color.GRAY);
 		portraitLabel.setOpaque(true);
-		portraitLabel.setBounds(0, 0, 326, 427);
+		portraitLabel.setBounds(6, 0, 315, 427);
 
 		JPanel portraitPanel = new JPanel();
 		portraitPanel.setBounds(0, 0, 326, 427);
@@ -164,8 +165,9 @@ public class GUI {
 		portraitPanel.setOpaque(false);
 		portraitPanel.setLayout(null);
 		characterPicLabel = new JLabel("");
+		characterPicLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		characterPicLabel.setPreferredSize(new Dimension(288, 362));
-		characterPicLabel.setBounds(18, 16, 288, 362);
+		characterPicLabel.setBounds(19, 13, 288, 362);
 		portraitPanel.add(characterPicLabel);
 		portraitPanel.add(portraitLabel);
 
