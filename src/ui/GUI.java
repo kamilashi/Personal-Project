@@ -214,7 +214,7 @@ public class GUI {
 		portraitPane.add(portraitPanel);
 		portraitLabel.setVisible(true);
 
-		inventory = new InventoryPanel(game.getCurrentPlayer());
+		inventory = new InventoryPanel(game.getCurrentPlayer(),screenSize);
 
 		backgroundPanel.add(inventory);
 		gameFrame.addMouseListener(new MouseClickedOutside(inventory));

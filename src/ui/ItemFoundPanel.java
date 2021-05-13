@@ -23,6 +23,7 @@ public class ItemFoundPanel extends JPanel implements Observer  {
 	private JLabel panelBackground;
 	private JLabel valueInfoLabel;
 	private JLabel itemNameLabel;
+	private int xLocation,yLocation;
 	
 	private Dimension frameDimension;
 
@@ -77,7 +78,9 @@ public class ItemFoundPanel extends JPanel implements Observer  {
     	panelBackground.setIcon(new ImageIcon(ItemFoundPanel.class.getResource("/ui/assets/mainIcons/itemFoundDefault.png")));
     	panelBackground.setBounds(-1, 0, panelBackground.getIcon().getIconWidth(), panelBackground.getIcon().getIconHeight());
     	add(panelBackground);
-    	setBounds(1400, 0, panelBackground.getIcon().getIconWidth()-1, panelBackground.getIcon().getIconHeight());
+    	xLocation = (int) (0.72*1920);	//1400 for 1080p
+    	yLocation = 0;
+    	setBounds(xLocation, yLocation, panelBackground.getIcon().getIconWidth()-1, panelBackground.getIcon().getIconHeight());
         
     }
     

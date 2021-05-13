@@ -38,18 +38,24 @@ public class InventoryPanel extends JPanel implements Closable{
     
 
 	private JScrollPane scrollPaneTable;
-
-    public InventoryPanel(Player player)
+	int xLocation,yLocation;
+	//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	Dimension screenSize;
+	
+    public InventoryPanel(Player player, Dimension screenSize)
     {
     	super();
+    	this.screenSize = screenSize;
     	this.currentPlayer = player;
+    	xLocation = screenSize.width - this.getWidth();
+    	yLocation = (int) (screenSize.height*0.074);				//80 for 1080
     	//this.frameDimension = frameDimension;
     	initializeComponents();
     }
     
     public void initializeComponents()
     {
-    	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    	
     	
     	//this = new JPanel();
         inventoryBackground = new JLabel();
@@ -57,7 +63,8 @@ public class InventoryPanel extends JPanel implements Closable{
         inventoryBackground.setVerticalAlignment(SwingConstants.TOP);
         inventoryBackground.setBounds(0, 0, 636, 935);
         this.setLayout(null);
-        this.setBounds(screenSize.width - this.getWidth(), 80, 636, 935);
+        
+        this.setBounds(xLocation, yLocation, 636, 935);
         
         inventoryTableModel = new InventoryTableModel();
         
