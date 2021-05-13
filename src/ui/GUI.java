@@ -11,6 +11,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -58,8 +60,8 @@ public class GUI {
 	JFrame gameFrame;
 	Container con;
 	JPanel titleNamePanel, mainTextPanel, choiceButtonPanel;
-	 ResizeablePanel backgroundPanel;
-	//JPanel backgroundPanel;
+	// ResizeablePanel backgroundPanel;
+	ScaleablePanel backgroundPanel;
 	JMenuItem player1, player2, player3, player4;
 	JPanel playerChoice, outputPanel, inputPanel1;
 	JMenu playerPopup;
@@ -81,15 +83,18 @@ public class GUI {
 	private String npcIconsPath = "/ui/assets/objectIcons/";
 	@SuppressWarnings("unused")
 	private String playerIconsPath = "/ui/assets/mainIcons/";
-	private JPanel contentPanel;
+	private ScaleablePanel textStripWrapper;
+	private int verticalScrollBarMaximumValue;
+	private JPanel inputPanel;
+	private JScrollPane scrollPane;
+	private JPanel controlPanelWrapper;
 
+	//private int leftPole, rightPole;
 	static GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0];
 
 	public GUI(Game game) throws IOException {
 		this.game = game;
-		
-		
-		
+
 		initializeComponents();
 		inventory.setInactive();
 	}
@@ -99,12 +104,18 @@ public class GUI {
 		Dimension dim1920x1080 = new Dimension(1920, 1080);
 		Dimension dimPortPane = new Dimension(326, 421);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		screenSize = new Dimension(1600, 1050);
+	     //screenSize = new Dimension(1600, 1050);
+		
+		int leftPole = (int) (0.39 * screenSize.height);
+		int rightPole = (int) (screenSize.width - (0.88 * screenSize.height));
 
 		gameFrame = new JFrame(); // make the frame resizeable??
-		
-		//JOptionPane.showMessageDialog( gameFrame, "This version only supports 1920x1080 resolution. Please maximize the window for it to be displayed correctly.");
-		
+		gameFrame.setResizable(false);
+
+		// JOptionPane.showMessageDialog( gameFrame, "This version only supports
+		// 1920x1080 resolution. Please maximize the window for it to be displayed
+		// correctly.");
+
 		gameFrame.setSize(screenSize);
 		gameFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		gameFrame.setMaximumSize(screenSize);
@@ -118,15 +129,9 @@ public class GUI {
 		con.setBackground(Color.black);
 		con.setPreferredSize(screenSize);
 
-		backgroundPanel = new ResizeablePanel();
+		backgroundPanel = new ScaleablePanel(screenSize,leftPole,rightPole);
 		backgroundPanel.setForeground(Color.WHITE);
-		//backgroundPanel.setBounds(0, 0, gameFrame.getWidth(), gameFrame.getHeight());
-		backgroundPanel.setBounds(0, 0, screenSize.width, screenSize.height);
-		backgroundPanel.setPreferredSize(screenSize);
-		backgroundPanel.setBackground(Color.ORANGE);
-		backgroundPanel.setVisible(true);
-		backgroundPanel.setOpaque(true);
-		backgroundPanel.setLayout(null);
+		
 
 		String[] playerNames = { "Isaac", "Lemuel", "Derkhan", "Yagharek" }; // get names from game
 
@@ -153,6 +158,35 @@ public class GUI {
 		// backgroundPanel.add(portraitPane);
 
 		con.add(backgroundPanel);
+
+		inventory = new InventoryPanel(game.getCurrentPlayer(), screenSize);
+
+		backgroundPanel.add(inventory);
+		gameFrame.addMouseListener(new MouseClickedOutside(inventory));
+
+	
+
+		// 416x1080 for 1080p related to height
+		leftPanel = new JPanel();
+		leftPanel.setOpaque(false);
+		leftPanel.setBounds(backgroundPanel.getLeftBounds());
+		leftPanel.setLayout(null);
+		backgroundPanel.add(leftPanel);
+
+		// 960x1080 for 1080p - related to height
+		rightPanel = new JPanel();
+		rightPanel.setForeground(Color.ORANGE);
+		rightPanel.setOpaque(false);
+		rightPanel.setBounds(backgroundPanel.getRightBounds());
+		rightPanel.setLayout(null);
+		backgroundPanel.add(rightPanel);
+		
+
+		centerPanel = new JPanel();
+		centerPanel.setOpaque(false);
+		centerPanel.setBounds(backgroundPanel.getCenterBounds());
+		centerPanel.setLayout(null);
+		backgroundPanel.add(centerPanel);
 
 		JLabel portraitLabel = new JLabel();
 		portraitLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -181,6 +215,7 @@ public class GUI {
 		portraitPane.setOpaque(false);
 
 		playerChoice = new JPanel();
+		playerChoice.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		playerChoice.setBorder(new EmptyBorder(0, 0, 0, 0));
 		playerChoice.setOpaque(false);
 		playerChoice.setBounds(20, 386, 110, 25);
@@ -215,27 +250,15 @@ public class GUI {
 		portraitPane.add(portraitPanel);
 		portraitLabel.setVisible(true);
 
-		inventory = new InventoryPanel(game.getCurrentPlayer(),screenSize);
-
-		backgroundPanel.add(inventory);
-		gameFrame.addMouseListener(new MouseClickedOutside(inventory));
-
-		contentPanel = new JPanel();
-		contentPanel.setComponentOrientation(ComponentOrientation.LEFT_TO_RIGHT);
-		contentPanel.setOpaque(false);
-		//contentPanel.setBounds(0, 0, gameFrame.getWidth(), gameFrame.getHeight());
-		contentPanel.setBounds(0, 0, backgroundPanel.getWidth(), backgroundPanel.getHeight());
-
-		backgroundPanel.add(contentPanel);
-		contentPanel.setLayout(null);
-
-		JPanel controlPanelWrapper = new JPanel();
-		//1333,18 for 1080p (int) 0.69*1920, (int)0.016*1080
-		controlPanelWrapper.setBounds((screenSize.width - 380), 18, 350, 90);
+		controlPanelWrapper = new JPanel();
+		//controlPanelWrapper.setLocation((int) (0.69*screenSize.width), (int)(0.016*screenSize.height));
+		// 1333,18 for 1080p (int) 0.69*1920, (int)0.016*1080
+		controlPanelWrapper.setSize(200, 200);
+		controlPanelWrapper.setLocation((int) (screenSize.width - controlPanelWrapper.getWidth())- 20, (int)(0.016*screenSize.height));
+		
 		controlPanelWrapper.setOpaque(false);
-		FlowLayout flowLayout = (FlowLayout) controlPanelWrapper.getLayout();
-		flowLayout.setAlignment(FlowLayout.RIGHT);
-		contentPanel.add(controlPanelWrapper);
+		backgroundPanel.add(controlPanelWrapper);
+		controlPanelWrapper.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 
 		JPanel controlPanel = new JPanel();
 		controlPanel.setOpaque(false);
@@ -245,7 +268,8 @@ public class GUI {
 
 		JLabel inventoryButtonLabel = new JLabel();
 		inventoryButtonLabel.setPreferredSize(new Dimension(70, 70));
-		inventoryButtonLabel.setIcon(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/inventoryButtonIcon.png")));
+		inventoryButtonLabel
+				.setIcon(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/inventoryButtonIcon.png")));
 		inventoryButtonLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		inventoryButtonLabel.setHorizontalTextPosition(SwingConstants.RIGHT);
 		inventoryButtonLabel.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -259,40 +283,35 @@ public class GUI {
 		controlPanel.add(inventoryButtonLabel);
 
 		playerPanelWrapper = new JPanel();
-		//location 114,114 for 1080p
-		playerPanelWrapper.setLocation((int)(0.06*screenSize.width), 114);
+		// location 114,114 for 1080p
 		playerPanelWrapper.setSize(326, 421);
-		//playerPanelWrapper.setBounds(114, 114, 326, 421);
+		playerPanelWrapper.setPreferredSize(playerPanelWrapper.getSize());
+		playerPanelWrapper.setLocation((int) backgroundPanel.getLeftPole() - playerPanelWrapper.getWidth() + 24 , 114);
+		// playerPanelWrapper.setBounds(114, 114, 326, 421);
 		playerPanelWrapper.setOpaque(false);
-		FlowLayout fl_playerPanelWrapper = (FlowLayout) playerPanelWrapper.getLayout();
+		playerPanelWrapper.setLayout(new BorderLayout(0, 0));
 		playerPanelWrapper.add(portraitPane);
 		playerPanelWrapper.setPreferredSize(dimPortPane);
-		contentPanel.add(playerPanelWrapper);
+		backgroundPanel.add(playerPanelWrapper);
 
 		infoPanelWrapper = new JPanel();
-		//location 0,860 for 1080p
-		//size 420x218 for 1080p
-		//infoPanelWrapper.setSize( ((int) 0.21* screenSize.width), ((int)0.20*screenSize.height));
-		//infoPanelWrapper.setPreferredSize(new Dimension(((int) 0.21* screenSize.width), ((int)0.20*screenSize.height)));
-		//infoPanelWrapper.setPreferredSize(new Dimension(420,218));
-		infoPanelWrapper.setSize( ((int) (0.21* screenSize.width)), ((int)(0.20*screenSize.height)));
-		infoPanelWrapper.setPreferredSize(new Dimension( ((int) (0.21* screenSize.width)), ((int)(0.20*screenSize.height))));
-		infoPanelWrapper.setLocation(0, screenSize.height - infoPanelWrapper.getHeight());
-		//infoPanelWrapper.setBounds(0, 860, ((int) 0.21* screenSize.width), ((int)0.20*screenSize.height));
-		
+		// location 0,860 for 1080p
+		infoPanelWrapper.setSize(backgroundPanel.getLeftPole(),218);
+		infoPanelWrapper.setPreferredSize(infoPanelWrapper.getSize());
+		infoPanelWrapper.setLocation(1, screenSize.height - infoPanelWrapper.getHeight());
 		infoPanelWrapper.setOpaque(false);
-		contentPanel.add(infoPanelWrapper);
-		infoPanelWrapper.setLayout(null);
 		
+		backgroundPanel.add(infoPanelWrapper);
+		infoPanelWrapper.setLayout(new BorderLayout(0, 0));
 
-		infoPanel = new ResizeablePanel();
-		infoPanel.setBounds(0, 5, 0, 0);
-		//infoPanel = new JPanel();
-		infoPanel.setAlignmentY(Component.TOP_ALIGNMENT);
-		infoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		infoPanel = new JPanel();
+		//infoPanel.setBounds(0, 5, 0, 0);
+		// infoPanel = new JPanel();
+		//infoPanel.setAlignmentY(Component.TOP_ALIGNMENT);
+		//infoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		infoPanel.setOpaque(false);
-		infoPanel.setBounds(0, 0, infoPanelWrapper.getWidth(),infoPanelWrapper.getHeight());
-		infoPanel.setPreferredSize(new Dimension(infoPanelWrapper.getWidth(),infoPanelWrapper.getHeight()));
+		infoPanel.setSize(infoPanelWrapper.getWidth(), infoPanelWrapper.getHeight());
+		infoPanel.setPreferredSize(infoPanel.getSize());
 		infoPanelWrapper.add(infoPanel);
 		infoPanel.setLayout(null);
 
@@ -320,112 +339,112 @@ public class GUI {
 		healthInfoLabel.setFont(new Font("Times New Roman", Font.PLAIN, 25));
 		healthInfoLabel.setBounds(35, 98, 135, 57);
 		infoPanel.add(healthInfoLabel);
-		
+
 		JLabel infoPanelLabel = new JLabel("New label");
 		infoPanelLabel.setIcon(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/infoPanel.png")));
-		infoPanelLabel.setBounds(0, 0, 418,227);
+		infoPanelLabel.setBounds(0, 0, 420, 227);
 		infoPanelLabel.setPreferredSize(new Dimension(418, 213));
-		infoPanel.addBackground(infoPanelLabel);
-		//infoPanel.add(infoPanelLabel);
-		
-		
-		
-		
-		JPanel textPanelWrapper = new JPanel();
-		textPanelWrapper.setOpaque(false);
-		//418, 1080
-		textPanelWrapper.setSize(( (int)(screenSize.getWidth()*0.24)), (int) screenSize.getHeight());
-		textPanelWrapper.setLocation((playerPanelWrapper.getX()+playerPanelWrapper.getWidth() + 15), 0);
-		//textPanelWrapper.setBounds((playerPanelWrapper.getX()+playerPanelWrapper.getWidth() + 10), 0, ( (int)(screenSize.getWidth()*0.21)), (int) screenSize.getHeight());
-		contentPanel.add(textPanelWrapper);
-		textPanelWrapper.setLayout(new BorderLayout(0, 0));
-		
-		textHeaderPanel = new JPanel();
-		textHeaderPanel.setOpaque(false);
-		textHeaderPanel.setSize(textPanelWrapper.getWidth(),playerPanelWrapper.getY());
-		textHeaderPanel.setPreferredSize(new Dimension(textPanelWrapper.getWidth(),playerPanelWrapper.getY()));
-		textPanelWrapper.add(textHeaderPanel, BorderLayout.NORTH);
-		textHeaderPanel.setLayout(null);
+		// infoPanel.addBackground(infoPanelLabel);
+		infoPanel.add(infoPanelLabel);
 
-		outputPanelWrapper = new JPanel();
-		outputPanelWrapper.setLocation(0, playerPanelWrapper.getY());
-		//outputPanelWrapper.setBounds(401, 114, 428, 582);
-		outputPanelWrapper.setOpaque(false);
-		textPanelWrapper.add(outputPanelWrapper, BorderLayout.CENTER);
+		textStripWrapper = new ScaleablePanel(new Dimension(rightPole - leftPole,screenSize.height),68,rightPole - leftPole - 68);
+		textStripWrapper.setOpaque(false);
+		// 418, 1080
+		textStripWrapper.setSize(backgroundPanel.getRightPole() - backgroundPanel.getLeftPole(),screenSize.height);
+		textStripWrapper.setLocation(backgroundPanel.getLeftPole(), 0);
+		// textPanelWrapper.setBounds((playerPanelWrapper.getX()+playerPanelWrapper.getWidth()
+		// + 10), 0, ( (int)(screenSize.getWidth()*0.21)), (int)
+		// screenSize.getHeight());
+		backgroundPanel.add(textStripWrapper);
+		textStripWrapper.setLayout(null);
+
+
+		inputPanel = new JPanel();
+		inputPanel.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+		inputPanel.setBackground(Color.LIGHT_GRAY);
+		//inputPanel.setBounds(401, 970, 420, 110);
+		inputPanel.setSize(textStripWrapper.getCenterWidth(), 30);
+		inputPanel.setPreferredSize(inputPanel.getSize());
+		inputPanel.setLocation(textStripWrapper.leftPole, screenSize.height - (int) (infoPanel.getHeight()/2));
+		inputPanel.setOpaque(false);
+		textStripWrapper.add(inputPanel);
+
+		// inputPanel = new JPanel();
+		// inputPanel.setPreferredSize(new Dimension(410, 100));
+		// inputPanel.setOpaque(false);
+		// inputPanelWrapper.add(inputPanel);
+		// inputPanel.setLayout(null);
+
+		input = new JTextField();
+		input.setBackground(Color.LIGHT_GRAY);
+		input.setBounds(0, 0, inputPanel.getWidth(), 26);
+		input.setText("");
+		input.setSelectionColor(Color.GRAY);
+		input.setHorizontalAlignment(SwingConstants.LEFT);
+		input.setForeground(Color.DARK_GRAY);
+		input.setFont(new Font("Times New Roman", Font.PLAIN, 22));
+		input.setColumns(10);
+		input.setCaretColor(Color.DARK_GRAY);
+		input.setBorder(null);
+		input.setAutoscrolls(false);
+		input.setAlignmentX(0.0f);
+		input.addKeyListener(inputHandler);
+		inputPanel.setLayout(new BorderLayout(0, 0));
+		inputPanel.add(input);
+
+		outputPanel = new JPanel();
+		outputPanel.setLocation(textStripWrapper.leftPole,playerPanelWrapper.getY());
+		outputPanel.setSize(textStripWrapper.getCenterWidth(), (screenSize.height - playerPanelWrapper.getY() - infoPanel.getHeight()));
+		outputPanel.setPreferredSize(outputPanel.getSize());
+		outputPanel.setOpaque(false);
+		outputPanel.setBorder(null);
+		//outputPanel.setBounds(new Rectangle(0, playerPanelWrapper.getY(), backgroundPanel.rightPole - backgroundPanel.leftPole, screenSize.height - playerPanelWrapper.getY() - inputPanel.getY()));
+		outputPanel.setLayout(null);
+		textStripWrapper.add(outputPanel);
+
+		
+		
 
 		output = new JTextArea();
 		output.setFocusable(false);
 		output.setSelectionColor(Color.LIGHT_GRAY);
 		output.setOpaque(false);
 		output.setBorder(null);
-		output.setBounds(0, 0, 418, 763);
+		output.setBounds(0, 0, outputPanel.getWidth(), outputPanel.getHeight());
 		output.setWrapStyleWord(true);
 		output.setLineWrap(true);
 		output.setForeground(Color.DARK_GRAY);
 		output.setFont(new Font("Times New Roman", Font.PLAIN, 20));
 		output.setEditable(false);
 
-		JScrollPane scrollPane = new JScrollPane();
+		scrollPane = new JScrollPane();
 		scrollPane.setOpaque(false);
 		scrollPane.setAutoscrolls(true);
 		scrollPane.setBackground(Color.WHITE);
 		scrollPane.setBorder(null);
-		scrollPane.setBounds(0, 0, 418, 763);
+		scrollPane.setBounds(0, 0, output.getWidth(), output.getHeight());
 		scrollPane.getViewport().setOpaque(false);
 		scrollPane.setViewportView(output);
-
-		outputPanel = new JPanel();
-		outputPanel.setPreferredSize(new Dimension(418, 760));
-		outputPanel.setOpaque(false);
-		outputPanel.setBorder(null);
-		outputPanel.setBounds(new Rectangle(0, 0, 418, 763));
-		outputPanel.setLayout(null);
+		
+		 verticalScrollBarMaximumValue = scrollPane.getVerticalScrollBar().getMaximum();
+	    scrollPane.getVerticalScrollBar().addAdjustmentListener(
+	            e -> {
+	                if ((verticalScrollBarMaximumValue - e.getAdjustable().getMaximum()) == 0)
+	                    return;
+	                e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+	                verticalScrollBarMaximumValue = scrollPane.getVerticalScrollBar().getMaximum();
+	            });
 		outputPanel.add(scrollPane);
-
 		output.addMouseListener(new MouseClickedOutside(inventory));
-		outputPanelWrapper.add(outputPanel);
 		
+		textStripWrapper.setLeflLabel(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/text_left.png")));
+		textStripWrapper.setRightLabel(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/text_right.png")));
+		textStripWrapper.setCenterLabel(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/text_center.png")));
 		
-		JPanel inputPanelWrapper = new JPanel();
-		//inputPanelWrapper.setBounds(401, 970, 420, 110);
-		inputPanelWrapper.setSize(textPanelWrapper.getWidth(), (int)(infoPanel.getHeight()/2));
-		inputPanelWrapper.setPreferredSize(new Dimension(textPanelWrapper.getWidth(), infoPanel.getHeight()));
-		inputPanelWrapper.setOpaque(false);
-		textPanelWrapper.add(inputPanelWrapper, BorderLayout.SOUTH);
+		backgroundPanel.setLeflLabel(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/background_left.png")));
+		backgroundPanel.setRightLabel(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/background_right.png")));
+		//backgroundPanel.setCenterLabel(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/textCenter.png")));
 
-		//inputPanel = new JPanel();
-		//inputPanel.setPreferredSize(new Dimension(410, 100));
-		//inputPanel.setOpaque(false);
-		//inputPanelWrapper.add(inputPanel);
-		//inputPanel.setLayout(null);
-
-		input = new JTextField();
-		input.setBackground(Color.LIGHT_GRAY);
-		input.setBounds(0, 0, textPanelWrapper.getWidth(), 26);
-		input.setText("");
-		input.setSelectionColor(Color.LIGHT_GRAY);
-		input.setHorizontalAlignment(SwingConstants.LEFT);
-		input.setForeground(Color.GRAY);
-		input.setFont(new Font("Times New Roman", Font.PLAIN, 22));
-		input.setColumns(10);
-		input.setCaretColor(Color.GRAY);
-		input.setBorder(null);
-		input.setAutoscrolls(false);
-		input.setAlignmentX(0.0f);
-		input.addKeyListener(inputHandler);
-		inputPanelWrapper.add(input);
-		
-
-
-		
-
-		JLabel backgroundLabel = new JLabel("New label");
-		backgroundLabel.setIcon(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/background.png")));
-		backgroundLabel.setBounds(0, 0, 1920, 1080);
-		backgroundLabel.setPreferredSize(screenSize);
-		backgroundPanel.addBackground(backgroundLabel);
-		//backgroundPanel.add(backgroundLabel);
-		
 		gameFrame.addWindowStateListener(windowStateListener);
 		updatePlayerScreen();
 		gameFrame.pack();
@@ -522,16 +541,23 @@ public class GUI {
 	};
 	private JPanel playerPanelWrapper;
 	private JPanel infoPanelWrapper;
-	private ResizeablePanel infoPanel;
-	//private JPanel infoPanel;
+	// private ResizeablePanel infoPanel;
+	private JPanel infoPanel;
 	private JLabel healthPersentageLabel;
 	private JLabel healthInfoLabel;
 	private JLabel statusNameLabel;
 	private JLabel statusDescriptionLabel;
-	private JPanel inputPanel;
+	//private JPanel inputPanel;
 	private JTextField input;
 	private JPanel outputPanelWrapper;
 	private JPanel textHeaderPanel;
+	private JPanel leftPanel;
+	private JPanel rightPanel;
+	private JLabel leftBgLabel;
+	private JLabel centerBgLabel;
+	private JLabel rightBgLabel;
+	private JPanel centerPanel;
+	private ScaleablePanel BGPanel;
 
 	private void inventoryButtonLabelMouseClicked(MouseEvent evt) {// GEN-FIRST:event_inventoryButtonLabelMouseClicked
 		if (!inventory.isEnabled()) {
@@ -540,16 +566,32 @@ public class GUI {
 			inventory.close();
 		}
 	}
-	public void updateScale()
-	{
-		//gameFrame.pack();
-		backgroundPanel.setSize(gameFrame.getSize());
-		//contentPanel.setBounds(0, 0, gameFrame.getWidth(), gameFrame.getHeight());
-		contentPanel.setSize(gameFrame.getSize());
-		infoPanel.setSize(infoPanelWrapper.getWidth(),infoPanelWrapper.getHeight());
-		infoPanel.scaleBackground();
-		backgroundPanel.scaleBackground();
+
+	public void updateScale() {
+		// gameFrame.pack();
+		Dimension screenSize = gameFrame.getSize();
+		inventory.updateScreenSize(screenSize);
+		itemFoundPanel.updateScreenSize(screenSize);
+		backgroundPanel.setSize(screenSize);
+		backgroundPanel.scale();
+		controlPanelWrapper.setLocation((int) (screenSize.width - controlPanelWrapper.getWidth())- 20, (int)(0.016*screenSize.height));
+		playerPanelWrapper.setLocation((int) backgroundPanel.getLeftPole() - playerPanelWrapper.getWidth() + 24 , 114);
+		infoPanelWrapper.setSize(backgroundPanel.getLeftPole(),218);
+		infoPanelWrapper.setLocation(1, screenSize.height - infoPanelWrapper.getHeight());
 		
+		textStripWrapper.setSize(backgroundPanel.getRightPole() - backgroundPanel.getLeftPole(),screenSize.height);
+		textStripWrapper.scale();
+		textStripWrapper.setLocation(backgroundPanel.getLeftPole(), 0);
+		
+		inputPanel.setLocation(textStripWrapper.leftPole, screenSize.height - (int) (infoPanel.getHeight()/2));
+		inputPanel.setSize(textStripWrapper.getCenterWidth(), 30);
+		input.setBounds(0, 0, inputPanel.getWidth(), 26);
+		
+		outputPanel.setLocation(textStripWrapper.leftPole,playerPanelWrapper.getY());
+		outputPanel.setSize(textStripWrapper.getCenterWidth(), (screenSize.height - playerPanelWrapper.getY() - infoPanel.getHeight()));
+		output.setBounds(0, 0, outputPanel.getWidth(), outputPanel.getHeight());
+		scrollPane.setBounds(0, 0, output.getWidth(), output.getHeight());
+
 	}
 
 	class MouseClickedOutside extends MouseAdapter implements MouseListener {

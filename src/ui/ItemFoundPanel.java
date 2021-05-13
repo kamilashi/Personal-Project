@@ -95,7 +95,13 @@ public class ItemFoundPanel extends JPanel implements Observer  {
     this.setVisible(true);
     this.setEnabled(true);
     }
-    
+    public void updateScreenSize( Dimension screenSize)
+    {
+    	this.frameDimension = screenSize;
+    	xLocation = (int) (0.72*frameDimension.width);	//1400 for 1080p
+    	yLocation = 0;
+    	setBounds(xLocation, yLocation, panelBackground.getIcon().getIconWidth()-1, panelBackground.getIcon().getIconHeight());
+    }
     
     private void openAndClose()
     {

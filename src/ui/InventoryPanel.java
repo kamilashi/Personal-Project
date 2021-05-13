@@ -49,8 +49,13 @@ public class InventoryPanel extends JPanel implements Closable{
     	this.currentPlayer = player;
     	xLocation = screenSize.width - this.getWidth();
     	yLocation = (int) (screenSize.height*0.074);				//80 for 1080
+    	close();
     	//this.frameDimension = frameDimension;
     	initializeComponents();
+    }
+    public void updateScreenSize( Dimension screenSize)
+    {
+    	this.screenSize = screenSize;
     }
     
     public void initializeComponents()
