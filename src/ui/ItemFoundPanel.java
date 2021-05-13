@@ -78,7 +78,7 @@ public class ItemFoundPanel extends JPanel implements Observer  {
     	panelBackground.setIcon(new ImageIcon(ItemFoundPanel.class.getResource("/ui/assets/mainIcons/itemFoundDefault.png")));
     	panelBackground.setBounds(-1, 0, panelBackground.getIcon().getIconWidth(), panelBackground.getIcon().getIconHeight());
     	add(panelBackground);
-    	xLocation = (int) (0.72*1920);	//1400 for 1080p
+    	xLocation = (int) (0.72*frameDimension.width);	//1400 for 1080p
     	yLocation = 0;
     	setBounds(xLocation, yLocation, panelBackground.getIcon().getIconWidth()-1, panelBackground.getIcon().getIconHeight());
         

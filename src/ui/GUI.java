@@ -51,6 +51,7 @@ import java.awt.FlowLayout;
 import java.awt.ComponentOrientation;
 import javax.swing.BoxLayout;
 import java.awt.Point;
+import java.awt.BorderLayout;
 
 public class GUI {
 
@@ -98,11 +99,11 @@ public class GUI {
 		Dimension dim1920x1080 = new Dimension(1920, 1080);
 		Dimension dimPortPane = new Dimension(326, 421);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		//screenSize = new Dimension(1600, 800);
+		screenSize = new Dimension(1600, 1050);
 
 		gameFrame = new JFrame(); // make the frame resizeable??
 		
-		JOptionPane.showMessageDialog( gameFrame, "This version only supports 1920x1080 resolution. Please maximize the window for it to be displayed correctly.");
+		//JOptionPane.showMessageDialog( gameFrame, "This version only supports 1920x1080 resolution. Please maximize the window for it to be displayed correctly.");
 		
 		gameFrame.setSize(screenSize);
 		gameFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
@@ -226,40 +227,15 @@ public class GUI {
 		contentPanel.setBounds(0, 0, backgroundPanel.getWidth(), backgroundPanel.getHeight());
 
 		backgroundPanel.add(contentPanel);
-		contentPanel.setLayout(new FormLayout(new ColumnSpec[] {
-				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(77dlu;pref)"),
-				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(153dlu;pref)"),
-				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(24dlu;pref)"),
-				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("left:pref"),
-				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(331dlu;default)"),
-				FormSpecs.RELATED_GAP_COLSPEC,
-				ColumnSpec.decode("max(201dlu;pref)"),
-				FormSpecs.RELATED_GAP_COLSPEC,
-				FormSpecs.DEFAULT_COLSPEC,},
-			new RowSpec[] {
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(4dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				FormSpecs.DEFAULT_ROWSPEC,
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("fill:max(421px;pref)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("max(103dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("top:max(79dlu;default)"),
-				FormSpecs.RELATED_GAP_ROWSPEC,
-				RowSpec.decode("bottom:pref:grow"),}));
+		contentPanel.setLayout(null);
 
 		JPanel controlPanelWrapper = new JPanel();
+		//1333,18 for 1080p (int) 0.69*1920, (int)0.016*1080
+		controlPanelWrapper.setBounds((screenSize.width - 380), 18, 350, 90);
 		controlPanelWrapper.setOpaque(false);
 		FlowLayout flowLayout = (FlowLayout) controlPanelWrapper.getLayout();
 		flowLayout.setAlignment(FlowLayout.RIGHT);
-		contentPanel.add(controlPanelWrapper, "12, 4, fill, center");
+		contentPanel.add(controlPanelWrapper);
 
 		JPanel controlPanel = new JPanel();
 		controlPanel.setOpaque(false);
@@ -283,63 +259,40 @@ public class GUI {
 		controlPanel.add(inventoryButtonLabel);
 
 		playerPanelWrapper = new JPanel();
+		//location 114,114 for 1080p
+		playerPanelWrapper.setLocation((int)(0.06*screenSize.width), 114);
+		playerPanelWrapper.setSize(326, 421);
+		//playerPanelWrapper.setBounds(114, 114, 326, 421);
 		playerPanelWrapper.setOpaque(false);
 		FlowLayout fl_playerPanelWrapper = (FlowLayout) playerPanelWrapper.getLayout();
 		playerPanelWrapper.add(portraitPane);
 		playerPanelWrapper.setPreferredSize(dimPortPane);
-		contentPanel.add(playerPanelWrapper, "4, 6, 3, 1, center, center");
-
-		outputPanelWrapper = new JPanel();
-		outputPanelWrapper.setOpaque(false);
-		contentPanel.add(outputPanelWrapper, "8, 6, 1, 3, fill, fill");
-
-		output = new JTextArea();
-		output.setFocusable(false);
-		output.setSelectionColor(Color.LIGHT_GRAY);
-		output.setOpaque(false);
-		output.setBorder(null);
-		output.setBounds(0, 0, 418, 763);
-		output.setWrapStyleWord(true);
-		output.setLineWrap(true);
-		output.setForeground(Color.DARK_GRAY);
-		output.setFont(new Font("Times New Roman", Font.PLAIN, 20));
-		output.setEditable(false);
-
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setOpaque(false);
-		scrollPane.setAutoscrolls(true);
-		scrollPane.setBackground(Color.WHITE);
-		scrollPane.setBorder(null);
-		scrollPane.setBounds(0, 0, 418, 763);
-		scrollPane.getViewport().setOpaque(false);
-		scrollPane.setViewportView(output);
-
-		outputPanel = new JPanel();
-		outputPanel.setPreferredSize(new Dimension(418, 760));
-		outputPanel.setOpaque(false);
-		outputPanel.setBorder(null);
-		outputPanel.setBounds(new Rectangle(0, 0, 418, 763));
-		outputPanel.setLayout(null);
-		outputPanel.add(scrollPane);
-
-		output.addMouseListener(new MouseClickedOutside(inventory));
-		outputPanelWrapper.add(outputPanel);
+		contentPanel.add(playerPanelWrapper);
 
 		infoPanelWrapper = new JPanel();
-		FlowLayout flowLayout_2 = (FlowLayout) infoPanelWrapper.getLayout();
-		flowLayout_2.setVgap(0);
-		flowLayout_2.setHgap(0);
-		flowLayout_2.setAlignment(FlowLayout.LEFT);
+		//location 0,860 for 1080p
+		//size 420x218 for 1080p
+		//infoPanelWrapper.setSize( ((int) 0.21* screenSize.width), ((int)0.20*screenSize.height));
+		//infoPanelWrapper.setPreferredSize(new Dimension(((int) 0.21* screenSize.width), ((int)0.20*screenSize.height)));
+		//infoPanelWrapper.setPreferredSize(new Dimension(420,218));
+		infoPanelWrapper.setSize( ((int) (0.21* screenSize.width)), ((int)(0.20*screenSize.height)));
+		infoPanelWrapper.setPreferredSize(new Dimension( ((int) (0.21* screenSize.width)), ((int)(0.20*screenSize.height))));
+		infoPanelWrapper.setLocation(0, screenSize.height - infoPanelWrapper.getHeight());
+		//infoPanelWrapper.setBounds(0, 860, ((int) 0.21* screenSize.width), ((int)0.20*screenSize.height));
+		
 		infoPanelWrapper.setOpaque(false);
-		contentPanel.add(infoPanelWrapper, "1, 12, 4, 1");
+		contentPanel.add(infoPanelWrapper);
+		infoPanelWrapper.setLayout(null);
+		
 
-		//infoPanel = new ResizeablePanel();
-		infoPanel = new JPanel();
+		infoPanel = new ResizeablePanel();
+		infoPanel.setBounds(0, 5, 0, 0);
+		//infoPanel = new JPanel();
 		infoPanel.setAlignmentY(Component.TOP_ALIGNMENT);
 		infoPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		infoPanel.setOpaque(false);
-		infoPanel.setBounds(0, 0, 420,210);
-		infoPanel.setPreferredSize(new Dimension(420, 220));
+		infoPanel.setBounds(0, 0, infoPanelWrapper.getWidth(),infoPanelWrapper.getHeight());
+		infoPanel.setPreferredSize(new Dimension(infoPanelWrapper.getWidth(),infoPanelWrapper.getHeight()));
 		infoPanelWrapper.add(infoPanel);
 		infoPanel.setLayout(null);
 
@@ -372,24 +325,83 @@ public class GUI {
 		infoPanelLabel.setIcon(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/infoPanel.png")));
 		infoPanelLabel.setBounds(0, 0, 418,227);
 		infoPanelLabel.setPreferredSize(new Dimension(418, 213));
-		//infoPanel.addBackground(infoPanelLabel);
-		infoPanel.add(infoPanelLabel);
+		infoPanel.addBackground(infoPanelLabel);
+		//infoPanel.add(infoPanelLabel);
+		
+		
+		
+		
+		JPanel textPanelWrapper = new JPanel();
+		textPanelWrapper.setOpaque(false);
+		//418, 1080
+		textPanelWrapper.setSize(( (int)(screenSize.getWidth()*0.24)), (int) screenSize.getHeight());
+		textPanelWrapper.setLocation((playerPanelWrapper.getX()+playerPanelWrapper.getWidth() + 15), 0);
+		//textPanelWrapper.setBounds((playerPanelWrapper.getX()+playerPanelWrapper.getWidth() + 10), 0, ( (int)(screenSize.getWidth()*0.21)), (int) screenSize.getHeight());
+		contentPanel.add(textPanelWrapper);
+		textPanelWrapper.setLayout(new BorderLayout(0, 0));
+		
+		textHeaderPanel = new JPanel();
+		textHeaderPanel.setOpaque(false);
+		textHeaderPanel.setSize(textPanelWrapper.getWidth(),playerPanelWrapper.getY());
+		textHeaderPanel.setPreferredSize(new Dimension(textPanelWrapper.getWidth(),playerPanelWrapper.getY()));
+		textPanelWrapper.add(textHeaderPanel, BorderLayout.NORTH);
+		textHeaderPanel.setLayout(null);
 
+		outputPanelWrapper = new JPanel();
+		outputPanelWrapper.setLocation(0, playerPanelWrapper.getY());
+		//outputPanelWrapper.setBounds(401, 114, 428, 582);
+		outputPanelWrapper.setOpaque(false);
+		textPanelWrapper.add(outputPanelWrapper, BorderLayout.CENTER);
+
+		output = new JTextArea();
+		output.setFocusable(false);
+		output.setSelectionColor(Color.LIGHT_GRAY);
+		output.setOpaque(false);
+		output.setBorder(null);
+		output.setBounds(0, 0, 418, 763);
+		output.setWrapStyleWord(true);
+		output.setLineWrap(true);
+		output.setForeground(Color.DARK_GRAY);
+		output.setFont(new Font("Times New Roman", Font.PLAIN, 20));
+		output.setEditable(false);
+
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setOpaque(false);
+		scrollPane.setAutoscrolls(true);
+		scrollPane.setBackground(Color.WHITE);
+		scrollPane.setBorder(null);
+		scrollPane.setBounds(0, 0, 418, 763);
+		scrollPane.getViewport().setOpaque(false);
+		scrollPane.setViewportView(output);
+
+		outputPanel = new JPanel();
+		outputPanel.setPreferredSize(new Dimension(418, 760));
+		outputPanel.setOpaque(false);
+		outputPanel.setBorder(null);
+		outputPanel.setBounds(new Rectangle(0, 0, 418, 763));
+		outputPanel.setLayout(null);
+		outputPanel.add(scrollPane);
+
+		output.addMouseListener(new MouseClickedOutside(inventory));
+		outputPanelWrapper.add(outputPanel);
+		
+		
 		JPanel inputPanelWrapper = new JPanel();
+		//inputPanelWrapper.setBounds(401, 970, 420, 110);
+		inputPanelWrapper.setSize(textPanelWrapper.getWidth(), (int)(infoPanel.getHeight()/2));
+		inputPanelWrapper.setPreferredSize(new Dimension(textPanelWrapper.getWidth(), infoPanel.getHeight()));
 		inputPanelWrapper.setOpaque(false);
-		FlowLayout flowLayout_1 = (FlowLayout) inputPanelWrapper.getLayout();
-		flowLayout_1.setAlignment(FlowLayout.LEFT);
-		contentPanel.add(inputPanelWrapper, "8, 12, left, default");
+		textPanelWrapper.add(inputPanelWrapper, BorderLayout.SOUTH);
 
-		inputPanel = new JPanel();
-		inputPanel.setPreferredSize(new Dimension(410, 100));
-		inputPanel.setOpaque(false);
-		inputPanelWrapper.add(inputPanel);
-		inputPanel.setLayout(null);
+		//inputPanel = new JPanel();
+		//inputPanel.setPreferredSize(new Dimension(410, 100));
+		//inputPanel.setOpaque(false);
+		//inputPanelWrapper.add(inputPanel);
+		//inputPanel.setLayout(null);
 
 		input = new JTextField();
 		input.setBackground(Color.LIGHT_GRAY);
-		input.setBounds(0, 0, 400, 26);
+		input.setBounds(0, 0, textPanelWrapper.getWidth(), 26);
 		input.setText("");
 		input.setSelectionColor(Color.LIGHT_GRAY);
 		input.setHorizontalAlignment(SwingConstants.LEFT);
@@ -401,7 +413,11 @@ public class GUI {
 		input.setAutoscrolls(false);
 		input.setAlignmentX(0.0f);
 		input.addKeyListener(inputHandler);
-		inputPanel.add(input);
+		inputPanelWrapper.add(input);
+		
+
+
+		
 
 		JLabel backgroundLabel = new JLabel("New label");
 		backgroundLabel.setIcon(new ImageIcon(GUI.class.getResource("/ui/assets/mainIcons/background.png")));
@@ -506,8 +522,8 @@ public class GUI {
 	};
 	private JPanel playerPanelWrapper;
 	private JPanel infoPanelWrapper;
-	//private ResizeablePanel infoPanel;
-	private JPanel infoPanel;
+	private ResizeablePanel infoPanel;
+	//private JPanel infoPanel;
 	private JLabel healthPersentageLabel;
 	private JLabel healthInfoLabel;
 	private JLabel statusNameLabel;
@@ -515,6 +531,7 @@ public class GUI {
 	private JPanel inputPanel;
 	private JTextField input;
 	private JPanel outputPanelWrapper;
+	private JPanel textHeaderPanel;
 
 	private void inventoryButtonLabelMouseClicked(MouseEvent evt) {// GEN-FIRST:event_inventoryButtonLabelMouseClicked
 		if (!inventory.isEnabled()) {
@@ -529,6 +546,8 @@ public class GUI {
 		backgroundPanel.setSize(gameFrame.getSize());
 		//contentPanel.setBounds(0, 0, gameFrame.getWidth(), gameFrame.getHeight());
 		contentPanel.setSize(gameFrame.getSize());
+		infoPanel.setSize(infoPanelWrapper.getWidth(),infoPanelWrapper.getHeight());
+		infoPanel.scaleBackground();
 		backgroundPanel.scaleBackground();
 		
 	}
