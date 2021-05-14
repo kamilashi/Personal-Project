@@ -11,8 +11,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.AdjustmentEvent;
-import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
@@ -30,7 +28,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JScrollPane;
@@ -44,15 +41,8 @@ import javax.swing.plaf.basic.BasicComboBoxUI;
 import gamelogic.Game;
 
 import java.awt.Cursor;
-import com.jgoodies.forms.layout.FormLayout;
-import com.jgoodies.forms.layout.ColumnSpec;
-import com.jgoodies.forms.layout.RowSpec;
-import com.jgoodies.forms.layout.FormSpecs;
-import com.jgoodies.common.*;
 import java.awt.FlowLayout;
 import java.awt.ComponentOrientation;
-import javax.swing.BoxLayout;
-import java.awt.Point;
 import java.awt.BorderLayout;
 
 public class GUI {
@@ -81,8 +71,6 @@ public class GUI {
 	static final ClassLoader loader = Game.class.getClassLoader();
 
 	private String npcIconsPath = "/ui/assets/objectIcons/";
-	@SuppressWarnings("unused")
-	private String playerIconsPath = "/ui/assets/mainIcons/";
 	private ScaleablePanel textStripWrapper;
 	private int verticalScrollBarMaximumValue;
 	private JPanel inputPanel;
@@ -101,7 +89,7 @@ public class GUI {
 
 	public void initializeComponents() throws IOException {
 
-		Dimension dim1920x1080 = new Dimension(1920, 1080);
+		new Dimension(1920, 1080);
 		Dimension dimPortPane = new Dimension(326, 421);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 	     //screenSize = new Dimension(1600, 1050);
@@ -110,7 +98,7 @@ public class GUI {
 		int rightPole = (int) (screenSize.width - (0.88 * screenSize.height));
 
 		gameFrame = new JFrame(); // make the frame resizeable??
-		gameFrame.setResizable(false);
+		//gameFrame.setResizable(false);
 
 		// JOptionPane.showMessageDialog( gameFrame, "This version only supports
 		// 1920x1080 resolution. Please maximize the window for it to be displayed
@@ -549,16 +537,9 @@ public class GUI {
 	private JLabel statusDescriptionLabel;
 	//private JPanel inputPanel;
 	private JTextField input;
-	private JPanel outputPanelWrapper;
-	private JPanel textHeaderPanel;
 	private JPanel leftPanel;
 	private JPanel rightPanel;
-	private JLabel leftBgLabel;
-	private JLabel centerBgLabel;
-	private JLabel rightBgLabel;
 	private JPanel centerPanel;
-	private ScaleablePanel BGPanel;
-
 	private void inventoryButtonLabelMouseClicked(MouseEvent evt) {// GEN-FIRST:event_inventoryButtonLabelMouseClicked
 		if (!inventory.isEnabled()) {
 			inventory.open();
@@ -666,10 +647,11 @@ public class GUI {
 
 		public void keyPressed(KeyEvent e) {
 			if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-
+				
+				
 				game.play(input.getText());
-				updatePlayerScreen();
 				input.setText("");
+				updatePlayerScreen();
 			}
 		}
 
