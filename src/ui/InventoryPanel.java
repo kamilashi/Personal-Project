@@ -38,18 +38,29 @@ public class InventoryPanel extends JPanel implements Closable{
     
 
 	private JScrollPane scrollPaneTable;
-
-    public InventoryPanel(Player player)
+	int xLocation,yLocation;
+	//Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	Dimension screenSize;
+	
+    public InventoryPanel(Player player, Dimension screenSize)
     {
     	super();
+    	this.screenSize = screenSize;
     	this.currentPlayer = player;
+    	xLocation = screenSize.width - this.getWidth();
+    	yLocation = (int) (screenSize.height*0.074);				//80 for 1080
+    	close();
     	//this.frameDimension = frameDimension;
     	initializeComponents();
+    }
+    public void updateScreenSize( Dimension screenSize)
+    {
+    	this.screenSize = screenSize;
     }
     
     public void initializeComponents()
     {
-    	Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+    	
     	
     	//this = new JPanel();
         inventoryBackground = new JLabel();
@@ -57,7 +68,8 @@ public class InventoryPanel extends JPanel implements Closable{
         inventoryBackground.setVerticalAlignment(SwingConstants.TOP);
         inventoryBackground.setBounds(0, 0, 636, 935);
         this.setLayout(null);
-        this.setBounds(screenSize.width - this.getWidth(), 80, 636, 935);
+        
+        this.setBounds(xLocation, yLocation, 636, 935);
         
         inventoryTableModel = new InventoryTableModel();
         
@@ -191,14 +203,13 @@ public class InventoryPanel extends JPanel implements Closable{
     
     public void open()
     {
-    	Dimension frameDimension = Toolkit.getDefaultToolkit().getScreenSize();
     	this.setActive();
         Thread th = new Thread()
         {
         public void run()
             {
                 try{
-                	int	rightBound = frameDimension.width;
+                	int	rightBound = screenSize.width;
                     int	leftBound = rightBound - getWidth();
                     int y = getY();
                     int width =  getWidth();
@@ -219,14 +230,13 @@ public class InventoryPanel extends JPanel implements Closable{
     }
     public void close()
     {
-    	Dimension frameDimension = Toolkit.getDefaultToolkit().getScreenSize();
     	Thread th = new Thread()
         {
         public void run()
             {
                 try{
                 	int	leftBound = getX();
-                	int	rightBound = frameDimension.width;
+                	int	rightBound = screenSize.width;
                 	 int y = getY();
 	                 int width =  getWidth();
 	                 int height =  getHeight();
